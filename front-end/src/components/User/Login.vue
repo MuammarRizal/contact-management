@@ -19,6 +19,7 @@ const handleSubmit = async () => {
     const response = await userLogin(user);
     const data = await response.json();
     if (data.errors) {
+      Object.assign(user, initialForm);
       errorAlert(data.errors);
       return;
     }

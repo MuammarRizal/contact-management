@@ -2,8 +2,9 @@ import { createRouter, createWebHistory } from "vue-router";
 import Login from "../components/User/Login.vue";
 import Layout from "../Layouts/Layout.vue";
 import Register from "../components/User/Register.vue";
-import { useLocalStorage } from "@vueuse/core";
 import DashboardLayout from "../Layouts/DashboardLayout.vue";
+import ContactList from "../components/Dashboard/ContactList.vue";
+import Profile from "../components/User/Profile.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -26,6 +27,16 @@ const router = createRouter({
     {
       path: "/dashboard",
       component: DashboardLayout,
+      children: [
+        {
+          path: "contacts",
+          component: ContactList,
+        },
+        {
+          path: "user/profile",
+          component: Profile,
+        },
+      ],
     },
   ],
 });

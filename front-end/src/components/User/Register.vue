@@ -2,7 +2,7 @@
 import { reactive } from "vue";
 import { userRegister } from "../../lib/api/auth.api";
 import { errorAlert } from "../../lib/alerts/alert";
-import { useRouter } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 
 const router = useRouter();
 
@@ -29,10 +29,16 @@ const handleSubmit = async () => {
     const response = await userRegister(users);
     const data = await response.json();
 
-    router.push("/dashboard");
-    console.log({ data });
+    if (data.response === 200) {
+      router.push("/dashboard");
+      console.log({ data });
+    } else {
+      errorAlert(data.errors);
+    }
+    console.log(data);
   } catch (error) {
-    console.log(error), errorAlert(error.message);
+    console.log(error);
+    errorAlert(error.message);
   }
 };
 </script>
@@ -155,10 +161,10 @@ const handleSubmit = async () => {
 
       <div class="text-center text-sm text-gray-400">
         Already have an account?
-        <a
-          href="index.html"
+        <RouterLink
+          to="/login"
           class="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200"
-          >Sign in</a
+          >Sign in</RouterLink
         >
       </div>
     </form>

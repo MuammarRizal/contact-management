@@ -1,10 +1,12 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, useRouter } from "vue-router";
 import Login from "../components/User/Login.vue";
 import Layout from "../Layouts/Layout.vue";
 import Register from "../components/User/Register.vue";
 import DashboardLayout from "../Layouts/DashboardLayout.vue";
 import ContactList from "../components/Dashboard/ContactList.vue";
 import Profile from "../components/User/Profile.vue";
+import UserLogout from "../components/User/UserLogout.vue";
+import { useLocalStorage } from "@vueuse/core";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -35,6 +37,10 @@ const router = createRouter({
         {
           path: "user/profile",
           component: Profile,
+        },
+        {
+          path: "user/logout",
+          component: UserLogout,
         },
       ],
     },

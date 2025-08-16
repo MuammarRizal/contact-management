@@ -65,8 +65,19 @@ export const updatePasswordUser = async (token, password) => {
     }),
   });
 };
+
 export const deleteUser = async (token) => {
   return await fetch(`${import.meta.env.VITE_URL_API_CONTACT}/users/current`, {
+    method: "DELETE",
+    headers: {
+      accept: "application/json",
+      Authorization: token,
+    },
+  });
+};
+
+export const logoutUser = async (token) => {
+  return await fetch(`${import.meta.env.VITE_URL_API_CONTACT}/users/logout`, {
     method: "DELETE",
     headers: {
       accept: "application/json",

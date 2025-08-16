@@ -35,7 +35,6 @@ const handleSubmit = async () => {
     } else {
       errorAlert(data.errors);
     }
-    console.log(data);
   } catch (error) {
     console.log(error);
     errorAlert(error.message);

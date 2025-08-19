@@ -135,6 +135,7 @@
         />
       </div>
     </div>
+    <Pagination />
   </div>
 </template>
 
@@ -145,10 +146,12 @@ import { errorAlert, SuccessAlert, warnAlert } from "../../lib/alerts/alert";
 import { onBeforeMount, ref } from "vue";
 import ContactCard from "../ContactCard.vue";
 import { RouterLink } from "vue-router";
+import Pagination from "../Pagination.vue";
 
 const contacts = ref([]);
 const token = useLocalStorage("token").value;
-console.log(contacts.value);
+const total_page = ref(1);
+const page = ref(1);
 const getContacts = async () => {
   try {
     const response = await getAllContacts(token);

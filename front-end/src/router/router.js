@@ -8,6 +8,7 @@ import Profile from "../components/User/Profile.vue";
 import UserLogout from "../components/User/UserLogout.vue";
 import { useLocalStorage } from "@vueuse/core";
 import ContactCreate from "../components/Dashboard/ContactCreate.vue";
+import ContactEdit from "../components/Dashboard/ContactEdit.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -38,6 +39,10 @@ const router = createRouter({
         {
           path: "contacts/create",
           component: ContactCreate,
+        },
+        {
+          path: "contacts/edit/:id",
+          component: ContactEdit,
         },
         {
           path: "user/profile",

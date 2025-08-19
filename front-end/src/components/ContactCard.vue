@@ -5,7 +5,7 @@ import { TOKEN } from "../../../nodejs-restful-api/src/utils/const";
 
 defineProps({
   id: {
-    type: String,
+    type: Number || String,
     required: true,
   },
   first_name: {

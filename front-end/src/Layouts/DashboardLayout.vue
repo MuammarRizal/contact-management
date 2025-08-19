@@ -44,7 +44,6 @@
       <router-view />
 
       <!-- Pagination -->
-      <Pagination />
 
       <!-- Footer -->
       <div class="mt-10 mb-6 text-center text-gray-400 text-sm animate-fade-in">

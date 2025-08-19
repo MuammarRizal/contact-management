@@ -1,41 +1,3 @@
-<script setup>
-import { reactive } from "vue";
-import { RouterLink, useRouter } from "vue-router";
-import { createContact } from "../../lib/api/contact.api";
-import { errorAlert, SuccessAlert } from "../../lib/alerts/alert";
-import { useLocalStorage } from "@vueuse/core";
-
-const initialForm = {
-  first_name: "",
-  last_name: "",
-  email: "",
-  phone: "",
-};
-
-const token = useLocalStorage("token").value;
-const router = useRouter();
-
-const contact = reactive(initialForm);
-
-const onSubmitForm = async () => {
-  try {
-    const response = await createContact(token, contact);
-    const data = await response.json();
-    console.log(data);
-    if (data.errors) {
-      Object.assign(contact, initialForm);
-      errorAlert(data.errors);
-      return;
-    }
-
-    router.push("/dashboard/contacts");
-  } catch (error) {
-    console.log(error);
-    errorAlert(error.message);
-  }
-};
-</script>
-
 <template>
   <main class="container mx-auto px-4 py-8 flex-grow">
     <div class="flex items-center mb-6">
@@ -46,7 +8,7 @@ const onSubmitForm = async () => {
         <i class="fas fa-arrow-left mr-2"></i> Back to Contacts
       </RouterLink>
       <h1 class="text-2xl font-bold text-white flex items-center">
-        <i class="fas fa-user-plus text-blue-400 mr-3"></i> Create New Contact
+        <i class="fas fa-user-edit text-blue-400 mr-3"></i> Edit Contact
       </h1>
     </div>
 
@@ -120,9 +82,9 @@ const onSubmitForm = async () => {
                 type="email"
                 id="email"
                 name="email"
-                v-model="contact.email"
                 class="w-full pl-10 pr-3 py-3 bg-gray-700 bg-opacity-50 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                 placeholder="Enter email address"
+                v-model="contact.email"
                 required
               />
             </div>
@@ -144,9 +106,9 @@ const onSubmitForm = async () => {
                 type="tel"
                 id="phone"
                 name="phone"
-                v-model="contact.phone"
                 class="w-full pl-10 pr-3 py-3 bg-gray-700 bg-opacity-50 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                 placeholder="Enter phone number"
+                v-model="contact.phone"
                 required
               />
             </div>
@@ -163,7 +125,7 @@ const onSubmitForm = async () => {
               type="submit"
               class="px-5 py-3 bg-gradient text-white rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-200 font-medium shadow-lg transform hover:-translate-y-0.5 flex items-center"
             >
-              <i class="fas fa-plus-circle mr-2"></i> Create Contact
+              <i class="fas fa-save mr-2"></i> Save Changes
             </button>
           </div>
         </form>
@@ -171,3 +133,61 @@ const onSubmitForm = async () => {
     </div>
   </main>
 </template>
+
+<script setup>
+import { onBeforeMount, reactive } from "vue";
+import { RouterLink, useRoute, useRouter } from "vue-router";
+import { editContact, getContactById } from "../../lib/api/contact.api";
+import { useLocalStorage } from "@vueuse/core";
+import { TOKEN } from "../../../../nodejs-restful-api/src/utils/const";
+import { errorAlert, SuccessAlert, warnAlert } from "../../lib/alerts/alert";
+
+const route = useRoute();
+const router = useRouter();
+const initialForm = {
+  email: "",
+  first_name: "",
+  last_name: "",
+  phone: "",
+};
+const contact = reactive(initialForm);
+const id = route.params.id;
+const token = useLocalStorage(TOKEN).value;
+
+const onSubmitForm = async () => {
+  const confirm = await warnAlert("Apa Data sudah Sesuai ? ");
+  if (!confirm.isConfirmed) {
+    return;
+  }
+
+  try {
+    const response = await editContact(token, contact);
+    const data = await response.json();
+    if (data.errors) {
+      errorAlert(data.errors);
+      return;
+    }
+    SuccessAlert("Edit Data Success");
+    router.push("/dashboard/contacts");
+    Object.assign(contact, initialForm);
+  } catch (error) {
+    console.log(error);
+    errorAlert(error.message);
+  }
+};
+
+onBeforeMount(async () => {
+  try {
+    const response = await getContactById(token, id);
+    const data = await response.json();
+    if (data.errors) {
+      errorAlert(data.errors);
+      router.push("/dashboard/contacts");
+      return;
+    }
+    Object.assign(contact, data.data);
+  } catch (error) {
+    console.log(error);
+  }
+});
+</script>

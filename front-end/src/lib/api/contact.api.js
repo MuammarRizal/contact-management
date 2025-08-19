@@ -1,6 +1,6 @@
-export const getAllContacts = async (token) => {
+export const getAllContacts = async (token, page) => {
   return await fetch(
-    `${import.meta.env.VITE_URL_API_CONTACT}/contacts?page=1`,
+    `${import.meta.env.VITE_URL_API_CONTACT}/contacts?page=${page}`,
     {
       method: "GET",
       headers: {

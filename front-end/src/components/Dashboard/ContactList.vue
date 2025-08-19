@@ -135,7 +135,7 @@
         />
       </div>
     </div>
-    <Pagination />
+    <Pagination :total_page="total_page" :page="page" />
   </div>
 </template>
 
@@ -143,25 +143,28 @@
 import { useLocalStorage } from "@vueuse/core";
 import { deleteContact, getAllContacts } from "../../lib/api/contact.api";
 import { errorAlert, SuccessAlert, warnAlert } from "../../lib/alerts/alert";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch, computed } from "vue";
 import ContactCard from "../ContactCard.vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRoute } from "vue-router";
 import Pagination from "../Pagination.vue";
 
 const contacts = ref([]);
+const route = useRoute();
 const token = useLocalStorage("token").value;
 const total_page = ref(1);
 const page = ref(1);
-const getContacts = async () => {
+const pageParams = computed(() => route.query.page || 1);
+
+const getContacts = async (page) => {
   try {
-    const response = await getAllContacts(token);
+    const response = await getAllContacts(token, page);
     const data = await response.json();
 
     if (data.errors) {
       errorAlert(data.errors);
       return [];
     }
-    return data.data;
+    return data;
   } catch (error) {
     console.log(error);
     errorAlert(error.message);
@@ -189,7 +192,21 @@ const onDeleteHandler = async (id) => {
   }
 };
 
+const loadContacts = async (page) => {
+  const result = await getContacts(page);
+  contacts.value = result.data;
+  total_page.value = result.paging.total_page;
+  page.value = result.paging.page;
+};
+watch(pageParams, async (newValue, oldValue) => {
+  const data = await getContacts(newValue);
+  contacts.value = data.data;
+});
+
 onBeforeMount(async () => {
-  contacts.value = await getContacts();
+  const data = await getContacts(pageParams.value);
+  contacts.value = data.data;
+  total_page.value = data.paging.total_page;
+  page.value = data.paging.page;
 });
 </script>

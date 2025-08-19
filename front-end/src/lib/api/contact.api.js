@@ -31,3 +31,14 @@ export const createContact = async (
     }),
   });
 };
+
+export const deleteContact = async (token, id) => {
+  return await fetch(`${import.meta.env.VITE_URL_API_CONTACT}/contacts/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: token,
+    },
+  });
+};

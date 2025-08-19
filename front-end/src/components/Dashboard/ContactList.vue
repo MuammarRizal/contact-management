@@ -131,6 +131,7 @@
           :last_name="contact.last_name"
           :email="contact.email"
           :phone="contact.phone"
+          :onDeleteHandler="onDeleteHandler"
         />
       </div>
     </div>
@@ -139,8 +140,8 @@
 
 <script setup>
 import { useLocalStorage } from "@vueuse/core";
-import { getAllContacts } from "../../lib/api/contact.api";
-import { errorAlert } from "../../lib/alerts/alert";
+import { deleteContact, getAllContacts } from "../../lib/api/contact.api";
+import { errorAlert, SuccessAlert, warnAlert } from "../../lib/alerts/alert";
 import { onBeforeMount, ref } from "vue";
 import ContactCard from "../ContactCard.vue";
 import { RouterLink } from "vue-router";
@@ -165,7 +166,25 @@ const getContacts = async () => {
   }
 };
 
-console.log(contacts.value);
+const onDeleteHandler = async (id) => {
+  try {
+    const confirm = await warnAlert("Apa Anda Yakin Ingin Menghapus ? ");
+    if (!confirm.isConfirmed) {
+      return;
+    }
+    const response = await deleteContact(token, id);
+    const data = await response.json();
+    if (data.errors) {
+      errorAlert(data.errors);
+      return;
+    }
+    SuccessAlert("Data Berhasil Terhapus");
+    contacts.value = await getContacts();
+  } catch (error) {
+    console.log(error);
+    errorAlert(error.message);
+  }
+};
 
 onBeforeMount(async () => {
   contacts.value = await getContacts();

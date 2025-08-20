@@ -31,6 +31,7 @@ const router = createRouter({
     {
       path: "/dashboard",
       component: DashboardLayout,
+      meta: { requiresAuth: true },
       children: [
         {
           path: "contacts",
@@ -57,4 +58,18 @@ const router = createRouter({
   ],
 });
 
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem("token");
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!token) {
+      // kalau tidak ada token, redirect ke login
+      next({ path: "/login" });
+    } else {
+      // kalau ada token, lanjut
+      next();
+    }
+  } else {
+    next();
+  }
+});
 export default router;

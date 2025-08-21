@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue";
+import { useRoute } from "vue-router";
 
 defineProps({
   total_page: {
@@ -12,7 +13,9 @@ defineProps({
   },
 });
 
-const pageParams = computed(() => route.query.page || 1);
+const route = useRoute();
+
+const pageParams = computed(() => Number(route.query.page) || 1);
 </script>
 
 <template>
@@ -28,7 +31,7 @@ const pageParams = computed(() => route.query.page || 1);
       </RouterLink>
       <RouterLink
         :to="`/dashboard/contacts?page=${numPage}`"
-        :class="`${page === numPage ? 'bg-gradient' : ''}
+        :class="`${pageParams === numPage ? 'bg-gradient' : ''}
          px-4 py-2 text-white rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-200 font-medium shadow-md`"
         v-for="(numPage, index) in total_page"
         :key="index"
